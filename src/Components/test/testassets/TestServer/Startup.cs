@@ -82,27 +82,20 @@ namespace TestServer
                     options.SetDefaultCulture("en-US");
                 });
 
-                app.MapWhen(ctx => ctx.Request.Cookies.TryGetValue("__blazor_execution_mode", out var value) && value == "server",
-                    child =>
+                app.UseRouting();
+                app.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapBlazorHub();
+                    if (Configuration.GetValue<string>("test-execution-mode") == "server")
                     {
-                        child.UseRouting();
-                        child.UseEndpoints(childEndpoints =>
-                        {
-                            childEndpoints.MapBlazorHub();
-                            childEndpoints.MapFallbackToPage("/_ServerHost");
-                        });
-                    });
+                        endpoints.MapFallbackToPage("/_ServerHost");
+                    }
+                    else
+                    {
+                        endpoints.MapFallbackToClientSideBlazor<BasicTestApp.Startup>("index.html");
+                    }
+                });
 
-                app.MapWhen(ctx => !ctx.Request.Query.ContainsKey("__blazor_execution_mode"),
-                    child =>
-                    {
-                        child.UseRouting();
-                        child.UseEndpoints(childEndpoints =>
-                        {
-                            childEndpoints.MapBlazorHub();
-                            childEndpoints.MapFallbackToClientSideBlazor<BasicTestApp.Startup>("index.html");
-                        });
-                    });
             });
 
             // Separately, mount a prerendered server-side Blazor app on /prerendered
