@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace Microsoft.AspNetCore.Components.E2ETests.ServerExecutionTests
+namespace Microsoft.AspNetCore.Components.E2ETest.ServerExecutionTests
 {
     public class ComponentHubInvalidEventTest : IgnitorTest<AspNetSiteServerFixture>
     {

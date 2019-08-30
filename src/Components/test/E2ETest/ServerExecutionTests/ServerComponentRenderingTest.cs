@@ -3,7 +3,6 @@
 
 using System;
 using BasicTestApp;
-using ComponentsApp.App.Pages;
 using Microsoft.AspNetCore.Components.E2ETest.Infrastructure.ServerFixtures;
 using Microsoft.AspNetCore.Components.E2ETest.Tests;
 using Microsoft.AspNetCore.E2ETesting;

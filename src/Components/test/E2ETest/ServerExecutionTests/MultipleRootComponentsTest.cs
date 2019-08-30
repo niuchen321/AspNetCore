@@ -1,9 +1,11 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using BasicTestApp;
 using Microsoft.AspNetCore.Components.E2ETest.Infrastructure;
 using Microsoft.AspNetCore.Components.E2ETest.Infrastructure.ServerFixtures;
@@ -25,6 +27,37 @@ namespace Microsoft.AspNetCore.Components.E2ETest.ServerExecutionTests
             : base(browserFixture, serverFixture.WithServerExecution(), output)
         {
         }
+
+        public DateTime LastLogTimeStamp { get; set; } = DateTime.MinValue;
+
+        public override async Task InitializeAsync()
+        {
+            await base.InitializeAsync();
+
+            // Capture the last log timestamp so that we can filter logs when we
+            // check for duplicate connections.
+            var lastLog = Browser.Manage().Logs.GetLog(LogType.Browser).LastOrDefault();
+            if (lastLog != null)
+            {
+                LastLogTimeStamp = lastLog.Timestamp;
+            }
+        }
+
+        [Fact]
+        public void DoesNotStartMultipleConnections()
+        {
+            BeginInteractivity();
+            Browser.Exists(By.CssSelector("h3.interactive"));
+
+            Browser.True(() =>
+            {
+                var logs = Browser.Manage().Logs.GetLog(LogType.Browser).ToArray();
+                var curatedLogs = logs.Where(l => l.Timestamp > LastLogTimeStamp);
+
+                return curatedLogs.Count(e => e.Message.Contains("blazorpack")) == 1;
+            });
+        }
+
 
         [Fact]
         public void CanRenderMultipleRootComponents()
