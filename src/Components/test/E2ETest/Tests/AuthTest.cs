@@ -13,7 +13,7 @@ using Xunit.Abstractions;
 namespace Microsoft.AspNetCore.Components.E2ETest.Tests
 {
     [Collection("auth")] // Because auth uses cookies, this can't run in parallel with other auth tests
-    public class AuthTest : BasicTestAppTestBase
+    public class AuthTest : ServerTestBase<ToggleExecutionModeServerFixture<Program>>
     {
         // These strings correspond to the links in BasicTestApp\AuthTest\Links.razor
         protected const string CascadingAuthenticationStateLink = "Cascading authentication state";
@@ -27,12 +27,31 @@ namespace Microsoft.AspNetCore.Components.E2ETest.Tests
             BrowserFixture browserFixture,
             ToggleExecutionModeServerFixture<Program> serverFixture,
             ITestOutputHelper output)
+            : this(browserFixture, serverFixture, output, ExecutionMode.Client)
+        {
+        }
+
+        protected AuthTest(
+            BrowserFixture browserFixture,
+            ToggleExecutionModeServerFixture<Program> serverFixture,
+            ITestOutputHelper output,
+            ExecutionMode executionMode)
             : base(browserFixture, serverFixture, output)
         {
             // Normally, the E2E tests use the Blazor dev server if they are testing
             // client-side execution. But for the auth tests, we always have to run
             // in "hosted on ASP.NET Core" mode, because we get the auth state from it.
-            serverFixture.UseAspNetHost(TestServer.Program.BuildWebHost<TestServer.AuthenticationStartup>);
+            switch (executionMode)
+            {
+                case ExecutionMode.Client:
+                    serverFixture.UseAspNetHost(TestServer.Program.BuildWebHost<TestServer.AuthenticationStartup>);
+                    break;
+                case ExecutionMode.Server:
+                    serverFixture.UseAspNetHost(TestServer.Program.BuildWebHost<TestServer.ServerAuthenticationStartup>);
+                    break;
+                default:
+                    break;
+            }
         }
 
         [Fact]

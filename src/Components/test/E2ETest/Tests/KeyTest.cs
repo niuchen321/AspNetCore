@@ -17,7 +17,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Components.E2ETest.Tests
 {
-    public class KeyTest : BasicTestAppTestBase
+    public class KeyTest : ServerTestBase<ToggleExecutionModeServerFixture<Program>>
     {
         public KeyTest(
             BrowserFixture browserFixture,

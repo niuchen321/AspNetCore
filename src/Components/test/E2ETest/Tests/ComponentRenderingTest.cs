@@ -19,7 +19,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Components.E2ETest.Tests
 {
-    public class ComponentRenderingTest : BasicTestAppTestBase
+    public class ComponentRenderingTest : ServerTestBase<ToggleExecutionModeServerFixture<Program>>
     {
         public ComponentRenderingTest(
             BrowserFixture browserFixture,

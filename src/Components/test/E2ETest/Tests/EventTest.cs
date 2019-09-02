@@ -13,7 +13,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Components.E2ETest.Tests
 {
-    public class EventTest : BasicTestAppTestBase
+    public class EventTest : ServerTestBase<ToggleExecutionModeServerFixture<Program>>
     {
         public EventTest(
             BrowserFixture browserFixture,

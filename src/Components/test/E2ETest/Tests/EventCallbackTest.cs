@@ -11,7 +11,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Components.E2ETest.Tests
 {
-    public class EventCallbackTest : BasicTestAppTestBase
+    public class EventCallbackTest : ServerTestBase<ToggleExecutionModeServerFixture<Program>>
     {
         public EventCallbackTest(
             BrowserFixture browserFixture,

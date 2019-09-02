@@ -18,24 +18,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <JSClientFilesInputs Include="..\BasicTestApp\wwwroot\js\jsinteroptests.js" />
-    <CssClientFilesInputs Include="..\BasicTestApp\wwwroot\style.css" />
-    <JSClientFilesOutputs Include="@(JSClientFilesInputs->'wwwroot\js\jsinteroptests.js" />
-    <CssClientFilesOutputs Include="@(CssClientFilesInputs->'wwwroot\styles.css" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\BasicTestApp\BasicTestApp.csproj" />
   </ItemGroup>
 
   <Target Name="CopyClientAssetsForTest" BeforeTargets="Build"
           Inputs="..\BasicTestApp\wwwroot\js\jsinteroptests.js;
+                  ..\BasicTestApp\wwwroot\NotAComponent.html;
                   ..\BasicTestApp\wwwroot\style.css"
           Outputs="wwwroot\js\jsinteroptests.js;
+                   wwwroot\NotAComponent.html;
                    wwwroot\style.css">
 
     <MakeDir Directories="wwwroot" />
-    <Copy SourceFiles="..\BasicTestApp\wwwroot\js\jsinteroptests.js;..\BasicTestApp\wwwroot\style.css"
-          DestinationFiles="wwwroot\js\jsinteroptests.js;wwwroot\style.css" />
+    <Copy SourceFiles="..\BasicTestApp\wwwroot\js\jsinteroptests.js;..\BasicTestApp\wwwroot\NotAComponent.html;..\BasicTestApp\wwwroot\style.css"
+          DestinationFiles="wwwroot\js\jsinteroptests.js;wwwroot\NotAComponent.html;wwwroot\style.css" />
   </Target>
 </Project>

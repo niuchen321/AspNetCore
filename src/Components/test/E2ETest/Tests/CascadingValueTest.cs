@@ -12,7 +12,7 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Components.E2ETest.Tests
 {
-    public class CascadingValueTest : BasicTestAppTestBase
+    public class CascadingValueTest : ServerTestBase<ToggleExecutionModeServerFixture<Program>>
     {
         public CascadingValueTest(
             BrowserFixture browserFixture,
