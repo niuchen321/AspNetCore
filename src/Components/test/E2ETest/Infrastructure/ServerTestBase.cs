@@ -3,6 +3,7 @@
 
 using Microsoft.AspNetCore.Components.E2ETest.Infrastructure.ServerFixtures;
 using Microsoft.AspNetCore.E2ETesting;
+using OpenQA.Selenium;
 using System;
 using Xunit;
 using Xunit.Abstractions;
@@ -23,19 +24,19 @@ namespace Microsoft.AspNetCore.Components.E2ETest.Infrastructure
 
         public void Navigate(string relativeUrl, bool noReload = false)
         {
-            var absoluteUrl = new Uri(_serverFixture.RootUri, relativeUrl);
+            Browser.Navigate(_serverFixture.RootUri, relativeUrl, noReload);
+        }
 
-            if (noReload)
-            {
-                var existingUrl = Browser.Url;
-                if (string.Equals(existingUrl, absoluteUrl.AbsoluteUri, StringComparison.Ordinal))
-                {
-                    return;
-                }
-            }
+        protected override void InitializeAsyncCore()
+        {
+            // Clear logs - we check these during tests in some cases.
+            // Make sure each test starts clean.
+            ((IJavaScriptExecutor)Browser).ExecuteScript("console.clear()");
+        }
 
-            Browser.Navigate().GoToUrl("about:blank");
-            Browser.Navigate().GoToUrl(absoluteUrl);
+        protected IWebElement WaitUntilExists(By findBy, int timeoutSeconds = 10, bool throwOnError = false)
+        {
+            return Browser.WaitUntilExists(findBy, timeoutSeconds, throwOnError);
         }
     }
 }

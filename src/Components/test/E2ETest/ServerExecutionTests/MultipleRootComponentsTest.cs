@@ -6,26 +6,27 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using BasicTestApp;
 using Microsoft.AspNetCore.Components.E2ETest.Infrastructure;
 using Microsoft.AspNetCore.Components.E2ETest.Infrastructure.ServerFixtures;
 using Microsoft.AspNetCore.E2ETesting;
 using OpenQA.Selenium;
+using TestServer;
 using Xunit;
 using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Components.E2ETest.ServerExecutionTests
 {
-    public class MultipleComponentsTest : BasicTestAppTestBase
+    public class MultipleComponentsTest : ServerTestBase<AspNetSiteServerFixture>
     {
         private const string MarkerPattern = ".*?<!--Blazor:(.*?)-->.*?";
 
         public MultipleComponentsTest(
             BrowserFixture browserFixture,
-            ToggleExecutionModeServerFixture<Program> serverFixture,
+            AspNetSiteServerFixture serverFixture,
             ITestOutputHelper output)
-            : base(browserFixture, serverFixture.WithServerExecution(), output)
+            : base(browserFixture, serverFixture, output)
         {
+            serverFixture.BuildWebHostMethod = Program.BuildWebHost<PrerenderedStartup>;
         }
 
         public DateTime LastLogTimeStamp { get; set; } = DateTime.MinValue;
@@ -46,6 +47,8 @@ namespace Microsoft.AspNetCore.Components.E2ETest.ServerExecutionTests
         [Fact]
         public void DoesNotStartMultipleConnections()
         {
+            Navigate("/prerendered/multiple-components");
+
             BeginInteractivity();
             Browser.Exists(By.CssSelector("h3.interactive"));
 
@@ -54,7 +57,7 @@ namespace Microsoft.AspNetCore.Components.E2ETest.ServerExecutionTests
                 var logs = Browser.Manage().Logs.GetLog(LogType.Browser).ToArray();
                 var curatedLogs = logs.Where(l => l.Timestamp > LastLogTimeStamp);
 
-                return curatedLogs.Count(e => e.Message.Contains("blazorpack")) == 1;
+                return curatedLogs.Count(e => e.Message.Contains("Starting up blazor server-side application")) == 1;
             });
         }
 

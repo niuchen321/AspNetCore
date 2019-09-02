@@ -98,19 +98,6 @@ namespace TestServer
 
             });
 
-            // Separately, mount a prerendered server-side Blazor app on /prerendered
-            app.Map("/prerendered", app =>
-            {
-                app.UsePathBase("/prerendered");
-                app.UseStaticFiles();
-                app.UseRouting();
-                app.UseEndpoints(endpoints =>
-                {
-                    endpoints.MapFallbackToPage("/PrerenderedHost");
-                    endpoints.MapBlazorHub();
-                });
-            });
-
             app.UseRouting();
 
             app.UseEndpoints(endpoints =>

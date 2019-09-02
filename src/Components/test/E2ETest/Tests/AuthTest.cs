@@ -214,5 +214,8 @@ namespace Microsoft.AspNetCore.Components.E2ETest.Tests
             appElement.FindElement(By.LinkText(authLinkText)).Click();
             return appElement;
         }
+
+        private void SignInAs(string usernName, string roles, bool useSeparateTab = false) =>
+            Browser.SignInAs(_serverFixture.RootUri, usernName, roles, useSeparateTab);
     }
 }
