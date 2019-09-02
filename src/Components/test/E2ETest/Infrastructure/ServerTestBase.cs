@@ -16,6 +16,7 @@ namespace Microsoft.AspNetCore.Components.E2ETest.Infrastructure
         where TServerFixture: ServerFixture
     {
         public string ServerPathBase => "/subdir";
+
         protected readonly TServerFixture _serverFixture;
 
         public ServerTestBase(BrowserFixture browserFixture, TServerFixture serverFixture, ITestOutputHelper output)
