@@ -4,6 +4,7 @@
 using Microsoft.AspNetCore.Components.E2ETest.Infrastructure.ServerFixtures;
 using Microsoft.AspNetCore.E2ETesting;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
 using System;
 using Xunit;
 using Xunit.Abstractions;
@@ -14,6 +15,7 @@ namespace Microsoft.AspNetCore.Components.E2ETest.Infrastructure
         : BrowserTestBase, IClassFixture<TServerFixture>
         where TServerFixture: ServerFixture
     {
+        public string ServerPathBase => "/subdir";
         protected readonly TServerFixture _serverFixture;
 
         public ServerTestBase(BrowserFixture browserFixture, TServerFixture serverFixture, ITestOutputHelper output)
@@ -25,6 +27,22 @@ namespace Microsoft.AspNetCore.Components.E2ETest.Infrastructure
         public void Navigate(string relativeUrl, bool noReload = false)
         {
             Browser.Navigate(_serverFixture.RootUri, relativeUrl, noReload);
+        }
+
+        protected IWebElement MountTestComponent<TComponent>() where TComponent : IComponent
+        {
+            var componentTypeName = typeof(TComponent).FullName;
+            var testSelector = WaitUntilTestSelectorReady();
+            testSelector.SelectByValue("none");
+            testSelector.SelectByValue(componentTypeName);
+            return Browser.FindElement(By.TagName("app"));
+        }
+
+        protected SelectElement WaitUntilTestSelectorReady()
+        {
+            var elemToFind = By.CssSelector("#test-selector > select");
+            WaitUntilExists(elemToFind, timeoutSeconds: 30, throwOnError: true);
+            return new SelectElement(Browser.FindElement(elemToFind));
         }
 
         protected override void InitializeAsyncCore()

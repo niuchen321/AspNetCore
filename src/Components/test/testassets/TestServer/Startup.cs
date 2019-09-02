@@ -32,6 +32,13 @@ namespace TestServer
                     var detailedErrors = Configuration.GetValue<bool>("circuit-detailed-errors");
                     o.DetailedErrors = detailedErrors;
                 });
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("NameMustStartWithB", policy =>
+                    policy.RequireAssertion(ctx => ctx.User.Identity.Name?.StartsWith("B") ?? false));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -59,19 +66,6 @@ namespace TestServer
             {
                 app.UseStaticFiles();
                 app.UseClientSideBlazorFiles<BasicTestApp.Startup>();
-
-                app.UseRequestLocalization(options =>
-                {
-                    options.AddSupportedCultures("en-US", "fr-FR");
-                    options.AddSupportedUICultures("en-US", "fr-FR");
-
-                    // Cookie culture provider is included by default, but we want it to be the only one.
-                    options.RequestCultureProviders.Clear();
-                    options.RequestCultureProviders.Add(new CookieRequestCultureProvider());
-
-                    // We want the default to be en-US so that the tests for bind can work consistently.
-                    options.SetDefaultCulture("en-US");
-                });
 
                 app.UseRouting();
                 app.UseEndpoints(endpoints =>

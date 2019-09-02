@@ -13,9 +13,6 @@ namespace Microsoft.AspNetCore.Components.E2ETest.Infrastructure
 {
     public class BasicTestAppTestBase : ServerTestBase<ToggleExecutionModeServerFixture<Program>>
     {
-        public string ServerPathBase
-            => "/subdir" + (_serverFixture.ExecutionMode == ExecutionMode.Server ? "#server" : "");
-
         public BasicTestAppTestBase(
             BrowserFixture browserFixture,
             ToggleExecutionModeServerFixture<Program> serverFixture,
@@ -23,22 +20,6 @@ namespace Microsoft.AspNetCore.Components.E2ETest.Infrastructure
             : base(browserFixture, serverFixture, output)
         {
             serverFixture.PathBase = ServerPathBase;
-        }
-
-        protected IWebElement MountTestComponent<TComponent>() where TComponent : IComponent
-        {
-            var componentTypeName = typeof(TComponent).FullName;
-            var testSelector = WaitUntilTestSelectorReady();
-            testSelector.SelectByValue("none");
-            testSelector.SelectByValue(componentTypeName);
-            return Browser.FindElement(By.TagName("app"));
-        }
-
-        protected SelectElement WaitUntilTestSelectorReady()
-        {
-            var elemToFind = By.CssSelector("#test-selector > select");
-            WaitUntilExists(elemToFind, timeoutSeconds: 30, throwOnError: true);
-            return new SelectElement(Browser.FindElement(elemToFind));
         }
     }
 }

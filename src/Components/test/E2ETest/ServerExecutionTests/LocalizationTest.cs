@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Components.E2ETest.Infrastructure.ServerFixtures;
 using Microsoft.AspNetCore.E2ETesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
+using TestServer;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -14,20 +15,21 @@ namespace Microsoft.AspNetCore.Components.E2ETest.ServerExecutionTests
 {
     // For now this is limited to server-side execution because we don't have the ability to set the
     // culture in client-side Blazor.
-    public class LocalizationTest : BasicTestAppTestBase
+    public class LocalizationTest : ServerTestBase<AspNetSiteServerFixture>
     {
         public LocalizationTest(
             BrowserFixture browserFixture,
-            ToggleExecutionModeServerFixture<Program> serverFixture,
+            AspNetSiteServerFixture serverFixture,
             ITestOutputHelper output)
-            : base(browserFixture, serverFixture.WithServerExecution(), output)
+            : base(browserFixture, serverFixture, output)
         {
+            serverFixture.BuildWebHostMethod = TestServer.Program.BuildWebHost<InternationalizationStartup>;
         }
 
         protected override void InitializeAsyncCore()
         {
             // On WebAssembly, page reloads are expensive so skip if possible
-            Navigate(ServerPathBase, _serverFixture.ExecutionMode == ExecutionMode.Client);
+            Navigate(ServerPathBase);
             MountTestComponent<CulturePicker>();
             WaitUntilExists(By.Id("culture-selector"));
         }
