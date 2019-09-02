@@ -3,7 +3,7 @@ using OpenQA.Selenium.Support.UI;
 
 namespace Microsoft.AspNetCore.Components.E2ETest
 {
-    internal static class AppHelpers
+    internal static class BasicTestAppWebDriverExtensions
     {
         public static IWebElement MountTestComponent<TComponent>(this IWebDriver browser) where TComponent : IComponent
         {

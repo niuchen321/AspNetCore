@@ -4,7 +4,7 @@ using OpenQA.Selenium;
 
 namespace Microsoft.AspNetCore.Components.E2ETest
 {
-    internal static class AuthHelpers
+    internal static class BasicTestAppAuthenticationWebDriverExtensions
     {
         public static void SignInAs(this IWebDriver browser, Uri baseUri, string usernameOrNull, string rolesOrNull, bool useSeparateTab = false)
         {
