@@ -1,6 +1,7 @@
 // Copyright (c) .NET Foundation. All rights reserved.
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using BasicTestApp;
 using Microsoft.AspNetCore.Components.E2ETest.Infrastructure;
 using Microsoft.AspNetCore.Components.E2ETest.Infrastructure.ServerFixtures;
@@ -31,7 +32,7 @@ namespace Microsoft.AspNetCore.Components.E2ETest.Tests
             // Normally, the E2E tests use the Blazor dev server if they are testing
             // client-side execution. But for the auth tests, we always have to run
             // in "hosted on ASP.NET Core" mode, because we get the auth state from it.
-            serverFixture.UseAspNetHost(TestServer.Program.BuildWebHost);
+            serverFixture.UseAspNetHost(TestServer.Program.BuildWebHost<TestServer.AuthenticationStartup>);
         }
 
         [Fact]
@@ -215,7 +216,7 @@ namespace Microsoft.AspNetCore.Components.E2ETest.Tests
             return appElement;
         }
 
-        private void SignInAs(string usernName, string roles, bool useSeparateTab = false) =>
-            Browser.SignInAs(_serverFixture.RootUri, usernName, roles, useSeparateTab);
+        private void SignInAs(string userName, string roles, bool useSeparateTab = false) =>
+            Browser.SignInAs(new Uri(_serverFixture.RootUri, "/subdir"), userName, roles, useSeparateTab);
     }
 }

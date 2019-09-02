@@ -32,13 +32,6 @@ namespace TestServer
                     var detailedErrors = Configuration.GetValue<bool>("circuit-detailed-errors");
                     o.DetailedErrors = detailedErrors;
                 });
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
-
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("NameMustStartWithB", policy =>
-                    policy.RequireAssertion(ctx => ctx.User.Identity.Name?.StartsWith("B") ?? false));
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -60,8 +53,6 @@ namespace TestServer
                     .AllowAnyMethod()
                     .AllowCredentials();
             });
-
-            app.UseAuthentication();
 
             // Mount the server-side Blazor app on /subdir
             app.Map("/subdir", app =>

@@ -54,7 +54,7 @@ namespace Microsoft.AspNetCore.Components.E2ETest.ServerExecutionTests
         }
 
         private void SignInAs(string usernName, string roles, bool useSeparateTab = false) =>
-            Browser.SignInAs(_serverFixture.RootUri, usernName, roles, useSeparateTab);
+            Browser.SignInAs(new Uri(_serverFixture.RootUri, "/subdir"), usernName, roles, useSeparateTab);
 
         private void PerformReconnection()
         {
