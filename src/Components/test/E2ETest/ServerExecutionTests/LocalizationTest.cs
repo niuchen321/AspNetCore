@@ -15,15 +15,14 @@ namespace Microsoft.AspNetCore.Components.E2ETest.ServerExecutionTests
 {
     // For now this is limited to server-side execution because we don't have the ability to set the
     // culture in client-side Blazor.
-    public class LocalizationTest : ServerTestBase<AspNetSiteServerFixture>
+    public class LocalizationTest : ServerTestBase<BasicTestAppServerSiteFixture<InternationalizationStartup>>
     {
         public LocalizationTest(
             BrowserFixture browserFixture,
-            AspNetSiteServerFixture serverFixture,
+            BasicTestAppServerSiteFixture<InternationalizationStartup> serverFixture,
             ITestOutputHelper output)
             : base(browserFixture, serverFixture, output)
         {
-            serverFixture.BuildWebHostMethod = TestServer.Program.BuildWebHost<InternationalizationStartup>;
         }
 
         protected override void InitializeAsyncCore()

@@ -16,17 +16,16 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Components.E2ETest.ServerExecutionTests
 {
-    public class MultipleComponentsTest : ServerTestBase<AspNetSiteServerFixture>
+    public class MultipleComponentsTest : ServerTestBase<BasicTestAppServerSiteFixture<PrerenderedStartup>>
     {
         private const string MarkerPattern = ".*?<!--Blazor:(.*?)-->.*?";
 
         public MultipleComponentsTest(
             BrowserFixture browserFixture,
-            AspNetSiteServerFixture serverFixture,
+            BasicTestAppServerSiteFixture<PrerenderedStartup> serverFixture,
             ITestOutputHelper output)
             : base(browserFixture, serverFixture, output)
         {
-            serverFixture.BuildWebHostMethod = Program.BuildWebHost<PrerenderedStartup>;
         }
 
         public DateTime LastLogTimeStamp { get; set; } = DateTime.MinValue;

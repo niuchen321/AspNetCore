@@ -16,7 +16,7 @@ using Xunit.Abstractions;
 namespace Microsoft.AspNetCore.Components.E2ETest.Tests
 {
     public class HttpClientTest : BrowserTestBase,
-        IClassFixture<DevHostServerFixture<BasicTestApp.Program>>, IClassFixture<AspNetSiteServerFixture>
+        IClassFixture<DevHostServerFixture<BasicTestApp.Program>>, IClassFixture<BasicTestAppServerSiteFixture<CorsStartup>>
     {
         private readonly DevHostServerFixture<BasicTestApp.Program> _devHostServerFixture;
         private readonly ServerFixture _apiServerFixture;
@@ -28,11 +28,10 @@ namespace Microsoft.AspNetCore.Components.E2ETest.Tests
         public HttpClientTest(
             BrowserFixture browserFixture,
             DevHostServerFixture<BasicTestApp.Program> devHostServerFixture,
-            AspNetSiteServerFixture apiServerFixture,
+            BasicTestAppServerSiteFixture<CorsStartup> apiServerFixture,
             ITestOutputHelper output)
             : base(browserFixture, output)
         {
-            apiServerFixture.BuildWebHostMethod = TestServer.Program.BuildWebHost<CorsStartup>;
             _devHostServerFixture = devHostServerFixture;
             _devHostServerFixture.PathBase = "/subdir";
             _apiServerFixture = apiServerFixture;

@@ -17,15 +17,14 @@ using Xunit.Abstractions;
 namespace Microsoft.AspNetCore.Components.E2ETest.ServerExecutionTests
 {
     [Collection("auth")] // Because auth uses cookies, this can't run in parallel with other auth tests
-    public class PrerenderingTest : ServerTestBase<AspNetSiteServerFixture>
+    public class PrerenderingTest : ServerTestBase<BasicTestAppServerSiteFixture<PrerenderedStartup>>
     {
         public PrerenderingTest(
             BrowserFixture browserFixture,
-            AspNetSiteServerFixture serverFixture,
+            BasicTestAppServerSiteFixture<PrerenderedStartup> serverFixture,
             ITestOutputHelper output)
             : base(browserFixture, serverFixture, output)
         {
-            serverFixture.BuildWebHostMethod = TestServer.Program.BuildWebHost<PrerenderedStartup>;
         }
 
         [Fact]
