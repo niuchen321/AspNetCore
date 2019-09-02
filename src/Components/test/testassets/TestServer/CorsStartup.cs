@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -7,9 +6,9 @@ using Microsoft.Extensions.Hosting;
 
 namespace TestServer
 {
-    public class Startup
+    public class CorsStartup
     {
-        public Startup(IConfiguration configuration)
+        public CorsStartup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
@@ -20,7 +19,10 @@ namespace TestServer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            services.AddServerSideBlazor();
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", _ => { /* Controlled below */ });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -31,6 +33,18 @@ namespace TestServer
                 app.UseDeveloperExceptionPage();
             }
 
+            // It's not enough just to return "Access-Control-Allow-Origin: *", because
+            // browsers don't allow wildcards in conjunction with credentials. So we must
+            // specify explicitly which origin we want to allow.
+            app.UseCors(policy =>
+            {
+                policy.SetIsOriginAllowed(host => host.StartsWith("http://localhost:") || host.StartsWith("http://127.0.0.1:"))
+                    .AllowAnyHeader()
+                    .WithExposedHeaders("MyCustomHeader")
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            });
+
             // Mount the server-side Blazor app on /subdir
             app.Map("/subdir", app =>
             {
@@ -40,32 +54,10 @@ namespace TestServer
                 app.UseRouting();
                 app.UseEndpoints(endpoints =>
                 {
-                    endpoints.MapBlazorHub();
-                    if (Configuration.GetValue<string>("test-execution-mode") == "server")
-                    {
-                        endpoints.MapFallbackToPage("/_ServerHost");
-                    }
-                    else
-                    {
-                        endpoints.MapFallbackToClientSideBlazor<BasicTestApp.Startup>("index.html");
-                    }
+                    endpoints.MapControllers();
+                    endpoints.MapFallbackToClientSideBlazor<BasicTestApp.Startup>("index.html");
                 });
 
-            });
-
-            app.UseRouting();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-                endpoints.MapRazorPages();
-
-                // Redirect for convenience when testing locally since we're hosting the app at /subdir/
-                endpoints.Map("/", context =>
-                {
-                    context.Response.Redirect("/subdir");
-                    return Task.CompletedTask;
-                });
             });
         }
     }
