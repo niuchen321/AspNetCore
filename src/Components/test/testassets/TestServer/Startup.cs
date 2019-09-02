@@ -1,3 +1,4 @@
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -19,8 +20,7 @@ namespace TestServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
-            services.AddServerSideBlazor();
+            services.AddSingleton<TestAppInfo>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -31,41 +31,47 @@ namespace TestServer
                 app.UseDeveloperExceptionPage();
             }
 
-            // Mount the server-side Blazor app on /subdir
-            app.Map("/subdir", app =>
+            app.Run(async ctx =>
             {
-                app.UseStaticFiles();
-                app.UseClientSideBlazorFiles<BasicTestApp.Startup>();
-
-                app.UseRouting();
-                app.UseEndpoints(endpoints =>
+                var appsInfo = ctx.RequestServices.GetRequiredService<TestAppInfo>();
+                var response = ctx.Response.ContentType = "text/html;charset=utf-8";
+                using var writer = new StringWriter();
+                await writer.WriteAsync(@"<!DOCTYPE html>
+<html>
+  <head>
+    <title>Blazor test server index</title>
+  </head>
+  <body>
+    <table>
+      <tr>
+        <th>Scenario</th>
+        <th>
+          <Link>Link</Link>
+        </th>
+      </tr>
+");
+                foreach (var scenario in appsInfo.Scenarios)
                 {
-                    endpoints.MapBlazorHub();
-                    if (Configuration.GetValue<string>("test-execution-mode") == "server")
-                    {
-                        endpoints.MapFallbackToPage("/_ServerHost");
-                    }
-                    else
-                    {
-                        endpoints.MapFallbackToClientSideBlazor<BasicTestApp.Startup>("index.html");
-                    }
-                });
-
-            });
-
-            app.UseRouting();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-                endpoints.MapRazorPages();
-
-                // Redirect for convenience when testing locally since we're hosting the app at /subdir/
-                endpoints.Map("/", context =>
-                {
-                    context.Response.Redirect("/subdir");
-                    return Task.CompletedTask;
-                });
+                    await writer.WriteAsync(@$"
+      <tr>
+        <td>{scenario.Key}</td>
+        <td><a href=""{scenario.Value}"">{scenario.Value}</a></td>
+      </tr>
+");
+                }
+                await writer.WriteAsync(@"
+    </table>
+    <style>
+        table, th, td, tr { border: 1px solid black; }
+        th { font-weight: bold; }
+    <style>
+  </body>
+</html>");
+                var content = writer.ToString();
+                ctx.Response.ContentLength = content.Length;
+                using var responseWriter = new StreamWriter(ctx.Response.Body);
+                await responseWriter.WriteAsync(content);
+                await responseWriter.FlushAsync();
             });
         }
     }
