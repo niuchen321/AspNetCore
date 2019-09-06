@@ -121,7 +121,7 @@ namespace Microsoft.AspNetCore.Components.E2ETest.ServerExecutionTests
             Browser.FindElement(By.Id("load-boot-script")).Click();
         }
 
-        private void SignInAs(string usernName, string roles, bool useSeparateTab = false) =>
-            Browser.SignInAs(new Uri(_serverFixture.RootUri, "/prerendered/"), usernName, roles, useSeparateTab);
+        private void SignInAs(string userName, string roles, bool useSeparateTab = false) =>
+            Browser.SignInAs(new Uri(_serverFixture.RootUri, "/prerendered/"), userName, roles, useSeparateTab);
     }
 }
