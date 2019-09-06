@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.E2ETesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 
@@ -17,7 +18,7 @@ namespace Microsoft.AspNetCore.Components.E2ETest
         public static SelectElement WaitUntilTestSelectorReady(this IWebDriver browser)
         {
             var elemToFind = By.CssSelector("#test-selector > select");
-            browser.WaitUntilExists(elemToFind, timeoutSeconds: 30, throwOnError: true);
+            browser.Exists(elemToFind);
             return new SelectElement(browser.FindElement(elemToFind));
         }
     }

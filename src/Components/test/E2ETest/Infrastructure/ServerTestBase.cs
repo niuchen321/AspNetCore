@@ -4,8 +4,6 @@
 using Microsoft.AspNetCore.Components.E2ETest.Infrastructure.ServerFixtures;
 using Microsoft.AspNetCore.E2ETesting;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Support.UI;
-using System;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -39,11 +37,6 @@ namespace Microsoft.AspNetCore.Components.E2ETest.Infrastructure
             // Clear logs - we check these during tests in some cases.
             // Make sure each test starts clean.
             ((IJavaScriptExecutor)Browser).ExecuteScript("console.clear()");
-        }
-
-        protected IWebElement WaitUntilExists(By findBy, int timeoutSeconds = 10, bool throwOnError = false)
-        {
-            return Browser.WaitUntilExists(findBy, timeoutSeconds, throwOnError);
         }
     }
 }

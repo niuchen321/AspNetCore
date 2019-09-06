@@ -31,7 +31,7 @@ namespace Microsoft.AspNetCore.Components.E2ETest.ServerExecutionTests
         {
             Navigate(ServerPathBase);
             Browser.MountTestComponent<CulturePicker>();
-            WaitUntilExists(By.Id("culture-selector"));
+            Browser.WaitUntilExists(By.Id("culture-selector"));
         }
 
         [Theory]
@@ -226,11 +226,11 @@ namespace Microsoft.AspNetCore.Components.E2ETest.ServerExecutionTests
             selector.SelectByValue(culture);
 
             // Click the link to return back to the test page
-            WaitUntilExists(By.ClassName("return-from-culture-setter")).Click();
+            Browser.WaitUntilExists(By.ClassName("return-from-culture-setter")).Click();
 
             // That should have triggered a page load, so wait for the main test selector to come up.
             Browser.MountTestComponent<GlobalizationBindCases>();
-            WaitUntilExists(By.Id("globalization-cases"));
+            Browser.WaitUntilExists(By.Id("globalization-cases"));
 
             var cultureDisplay = WaitUntilExists(By.Id("culture-name-display"));
             Assert.Equal($"Culture is: {culture}", cultureDisplay.Text);

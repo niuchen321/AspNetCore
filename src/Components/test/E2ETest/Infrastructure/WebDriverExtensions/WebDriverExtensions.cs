@@ -24,35 +24,5 @@ namespace Microsoft.AspNetCore.Components.E2ETest
             browser.Navigate().GoToUrl("about:blank");
             browser.Navigate().GoToUrl(absoluteUrl);
         }
-
-        public static IWebElement WaitUntilExists(this IWebDriver browser, By findBy, int timeoutSeconds = 10, bool throwOnError = false)
-        {
-            IReadOnlyList<LogEntry> errors = null;
-            IWebElement result = null;
-            new WebDriverWait(browser, TimeSpan.FromSeconds(timeoutSeconds)).Until(driver =>
-            {
-                if (throwOnError && browser.Manage().Logs.AvailableLogTypes.Contains(LogType.Browser))
-                {
-                    // Fail-fast if any errors were logged to the console.
-                    errors = browser.GetBrowserLogs(LogLevel.Severe);
-                    if (errors.Count > 0)
-                    {
-                        return true;
-                    }
-                }
-
-                return (result = driver.FindElement(findBy)) != null;
-            });
-
-            if (errors?.Count > 0)
-            {
-                var message =
-                    $"Encountered errors while looking for '{findBy}'." + Environment.NewLine +
-                    string.Join(Environment.NewLine, errors);
-                throw new XunitException(message);
-            }
-
-            return result;
-        }
     }
 }

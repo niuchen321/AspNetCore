@@ -85,7 +85,7 @@ namespace Microsoft.AspNetCore.Components.E2ETest.Tests
         {
             SignInAs(null, null);
             var appElement = MountAndNavigateToAuthTest(AuthorizeViewCases);
-            WaitUntilExists(By.CssSelector("#no-authorization-rule .not-authorized"));
+            Browser.WaitUntilExists(By.CssSelector("#no-authorization-rule .not-authorized"));
             Browser.Equal("You're not authorized, anonymous", () =>
                 appElement.FindElement(By.CssSelector("#no-authorization-rule .not-authorized")).Text);
             AssertExpectedLayoutUsed();
@@ -223,14 +223,14 @@ namespace Microsoft.AspNetCore.Components.E2ETest.Tests
 
         private void AssertExpectedLayoutUsed()
         {
-            WaitUntilExists(By.Id("auth-links"));
+            Browser.WaitUntilExists(By.Id("auth-links"));
         }
 
         protected IWebElement MountAndNavigateToAuthTest(string authLinkText)
         {
             Navigate(ServerPathBase);
             var appElement = Browser.MountTestComponent<BasicTestApp.AuthTest.AuthRouter>();
-            WaitUntilExists(By.Id("auth-links"));
+            Browser.WaitUntilExists(By.Id("auth-links"));
             appElement.FindElement(By.LinkText(authLinkText)).Click();
             return appElement;
         }
