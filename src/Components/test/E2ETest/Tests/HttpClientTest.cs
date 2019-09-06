@@ -5,6 +5,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using BasicTestApp.HttpClientTest;
+using Microsoft.AspNetCore.Components.E2ETest.Infrastructure;
 using Microsoft.AspNetCore.Components.E2ETest.Infrastructure.ServerFixtures;
 using Microsoft.AspNetCore.E2ETesting;
 using OpenQA.Selenium;
@@ -15,10 +16,9 @@ using Xunit.Abstractions;
 
 namespace Microsoft.AspNetCore.Components.E2ETest.Tests
 {
-    public class HttpClientTest : BrowserTestBase,
-        IClassFixture<DevHostServerFixture<BasicTestApp.Program>>, IClassFixture<BasicTestAppServerSiteFixture<CorsStartup>>
+    public class HttpClientTest : ServerTestBase<DevHostServerFixture<BasicTestApp.Program>>,
+        IClassFixture<BasicTestAppServerSiteFixture<CorsStartup>>
     {
-        private readonly DevHostServerFixture<BasicTestApp.Program> _devHostServerFixture;
         private readonly ServerFixture _apiServerFixture;
         IWebElement _appElement;
         IWebElement _responseStatus;
@@ -30,20 +30,17 @@ namespace Microsoft.AspNetCore.Components.E2ETest.Tests
             DevHostServerFixture<BasicTestApp.Program> devHostServerFixture,
             BasicTestAppServerSiteFixture<CorsStartup> apiServerFixture,
             ITestOutputHelper output)
-            : base(browserFixture, output)
+            : base(browserFixture, devHostServerFixture, output)
         {
-            _devHostServerFixture = devHostServerFixture;
-            _devHostServerFixture.PathBase = "/subdir";
+            _serverFixture.PathBase = "/subdir";
             _apiServerFixture = apiServerFixture;
         }
 
         protected override void InitializeAsyncCore()
         {
-            // Clear logs - we check these during tests in some cases.
-            // Make sure each test starts clean.
-            ((IJavaScriptExecutor)Browser).ExecuteScript("console.clear()");
+            base.InitializeAsyncCore();
 
-            Browser.Navigate(_devHostServerFixture.RootUri, "/subdir", noReload: true);
+            Browser.Navigate(_serverFixture.RootUri, "/subdir", noReload: true);
             _appElement = Browser.MountTestComponent<HttpRequestsComponent>();
         }
 

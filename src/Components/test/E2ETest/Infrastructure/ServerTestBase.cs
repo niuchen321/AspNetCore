@@ -12,14 +12,18 @@ using Xunit.Abstractions;
 namespace Microsoft.AspNetCore.Components.E2ETest.Infrastructure
 {
     public abstract class ServerTestBase<TServerFixture>
-        : BrowserTestBase, IClassFixture<TServerFixture>
+        : BrowserTestBase,
+        IClassFixture<TServerFixture>
         where TServerFixture: ServerFixture
     {
         public string ServerPathBase => "/subdir";
 
         protected readonly TServerFixture _serverFixture;
 
-        public ServerTestBase(BrowserFixture browserFixture, TServerFixture serverFixture, ITestOutputHelper output)
+        public ServerTestBase(
+            BrowserFixture browserFixture,
+            TServerFixture serverFixture,
+            ITestOutputHelper output)
             : base(browserFixture, output)
         {
             _serverFixture = serverFixture;

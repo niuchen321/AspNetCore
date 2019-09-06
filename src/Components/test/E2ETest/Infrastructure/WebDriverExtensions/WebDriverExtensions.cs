@@ -6,7 +6,7 @@ using Xunit.Sdk;
 
 namespace Microsoft.AspNetCore.Components.E2ETest
 {
-    internal static class BrowserExtensions
+    internal static class WebDriverExtensions
     {
         public static void Navigate(this IWebDriver browser, Uri baseUri, string relativeUrl, bool noReload)
         {
