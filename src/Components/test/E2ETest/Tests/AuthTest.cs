@@ -229,7 +229,7 @@ namespace Microsoft.AspNetCore.Components.E2ETest.Tests
         protected IWebElement MountAndNavigateToAuthTest(string authLinkText)
         {
             Navigate(ServerPathBase);
-            var appElement = MountTestComponent<BasicTestApp.AuthTest.AuthRouter>();
+            var appElement = Browser.MountTestComponent<BasicTestApp.AuthTest.AuthRouter>();
             WaitUntilExists(By.Id("auth-links"));
             appElement.FindElement(By.LinkText(authLinkText)).Click();
             return appElement;

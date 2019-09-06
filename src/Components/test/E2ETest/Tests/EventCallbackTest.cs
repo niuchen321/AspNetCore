@@ -25,7 +25,7 @@ namespace Microsoft.AspNetCore.Components.E2ETest.Tests
         {
             // On WebAssembly, page reloads are expensive so skip if possible
             Navigate(ServerPathBase, noReload: _serverFixture.ExecutionMode == ExecutionMode.Client);
-            MountTestComponent<BasicTestApp.EventCallbackTest.EventCallbackCases>();
+            Browser.MountTestComponent<BasicTestApp.EventCallbackTest.EventCallbackCases>();
         }
 
         [Theory]

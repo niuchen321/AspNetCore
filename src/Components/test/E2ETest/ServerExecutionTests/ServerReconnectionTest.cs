@@ -28,7 +28,7 @@ namespace Microsoft.AspNetCore.Components.E2ETest.ServerExecutionTests
         protected override void InitializeAsyncCore()
         {
             Navigate(ServerPathBase, noReload: false);
-            MountTestComponent<ReconnectionComponent>();
+            Browser.MountTestComponent<ReconnectionComponent>();
             Browser.Exists(By.Id("count"));
         }
 

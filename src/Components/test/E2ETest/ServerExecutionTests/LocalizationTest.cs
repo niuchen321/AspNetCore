@@ -28,7 +28,7 @@ namespace Microsoft.AspNetCore.Components.E2ETest.ServerExecutionTests
         protected override void InitializeAsyncCore()
         {
             Navigate(ServerPathBase);
-            MountTestComponent<CulturePicker>();
+            Browser.MountTestComponent<CulturePicker>();
             WaitUntilExists(By.Id("culture-selector"));
         }
 
@@ -44,7 +44,7 @@ namespace Microsoft.AspNetCore.Components.E2ETest.ServerExecutionTests
             WaitUntilExists(By.ClassName("return-from-culture-setter")).Click();
 
             // That should have triggered a page load, so wait for the main test selector to come up.
-            MountTestComponent<LocalizedText>();
+            Browser.MountTestComponent<LocalizedText>();
 
             var cultureDisplay = WaitUntilExists(By.Id("culture-name-display"));
             Assert.Equal($"Culture is: {culture}", cultureDisplay.Text);

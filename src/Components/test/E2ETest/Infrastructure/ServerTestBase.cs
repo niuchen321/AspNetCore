@@ -34,22 +34,6 @@ namespace Microsoft.AspNetCore.Components.E2ETest.Infrastructure
             Browser.Navigate(_serverFixture.RootUri, relativeUrl, noReload);
         }
 
-        protected IWebElement MountTestComponent<TComponent>() where TComponent : IComponent
-        {
-            var componentTypeName = typeof(TComponent).FullName;
-            var testSelector = WaitUntilTestSelectorReady();
-            testSelector.SelectByValue("none");
-            testSelector.SelectByValue(componentTypeName);
-            return Browser.FindElement(By.TagName("app"));
-        }
-
-        protected SelectElement WaitUntilTestSelectorReady()
-        {
-            var elemToFind = By.CssSelector("#test-selector > select");
-            WaitUntilExists(elemToFind, timeoutSeconds: 30, throwOnError: true);
-            return new SelectElement(Browser.FindElement(elemToFind));
-        }
-
         protected override void InitializeAsyncCore()
         {
             // Clear logs - we check these during tests in some cases.

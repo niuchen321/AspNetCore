@@ -30,7 +30,7 @@ namespace Microsoft.AspNetCore.Components.E2ETest.ServerExecutionTests
         protected override void InitializeAsyncCore()
         {
             Navigate(ServerPathBase);
-            MountTestComponent<CulturePicker>();
+            Browser.MountTestComponent<CulturePicker>();
             WaitUntilExists(By.Id("culture-selector"));
         }
 
@@ -86,7 +86,7 @@ namespace Microsoft.AspNetCore.Components.E2ETest.ServerExecutionTests
         // type="number" and type="date" produce fixed-format and culture-invariant input/output via the "value"
         // attribute - the actual input processing is harder to nail down. In practice this is only a problem
         // with dates.
-        // 
+        //
         // For this reason we avoid sending keys directly to the field, and let two-way binding do its thing instead.
         //
         // A brief summary:
@@ -229,7 +229,7 @@ namespace Microsoft.AspNetCore.Components.E2ETest.ServerExecutionTests
             WaitUntilExists(By.ClassName("return-from-culture-setter")).Click();
 
             // That should have triggered a page load, so wait for the main test selector to come up.
-            MountTestComponent<GlobalizationBindCases>();
+            Browser.MountTestComponent<GlobalizationBindCases>();
             WaitUntilExists(By.Id("globalization-cases"));
 
             var cultureDisplay = WaitUntilExists(By.Id("culture-name-display"));

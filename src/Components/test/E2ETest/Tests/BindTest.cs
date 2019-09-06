@@ -27,7 +27,7 @@ namespace Microsoft.AspNetCore.Components.E2ETest.Tests
         {
             // On WebAssembly, page reloads are expensive so skip if possible
             Navigate(ServerPathBase, noReload: _serverFixture.ExecutionMode == ExecutionMode.Client);
-            MountTestComponent<BindCasesComponent>();
+            Browser.MountTestComponent<BindCasesComponent>();
             WaitUntilExists(By.Id("bind-cases"));
         }
 

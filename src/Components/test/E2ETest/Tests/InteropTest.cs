@@ -27,7 +27,7 @@ namespace Microsoft.AspNetCore.Components.E2ETest.Tests
         protected override void InitializeAsyncCore()
         {
             Navigate(ServerPathBase, noReload: true);
-            MountTestComponent<InteropComponent>();
+            Browser.MountTestComponent<InteropComponent>();
         }
 
         [Fact]

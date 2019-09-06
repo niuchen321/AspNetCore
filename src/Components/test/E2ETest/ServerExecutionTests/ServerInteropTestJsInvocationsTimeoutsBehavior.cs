@@ -26,7 +26,7 @@ namespace Microsoft.AspNetCore.Components.E2ETest.ServerExecutionTests
         protected override void InitializeAsyncCore()
         {
             Navigate(ServerPathBase, noReload: true);
-            MountTestComponent<LongRunningInterop>();
+            Browser.MountTestComponent<LongRunningInterop>();
         }
 
         [Fact]
