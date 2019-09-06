@@ -50,10 +50,13 @@ namespace Microsoft.AspNetCore.E2ETesting
         public static void Exists(this IWebDriver driver, By finder, TimeSpan timeout)
             => WaitAssertCore(driver, () => Assert.NotEmpty(driver.FindElements(finder)), timeout);
 
-        public static IWebElement WaitUntilExists(this IWebDriver driver, By findBy) =>
-            WaitUntilExists(driver, findBy, default);
+        public static IWebElement Element(this IWebDriver driver, By findBy)
+        {
+            driver.Exists(findBy);
+            return driver.FindElements(findBy)[0];
+        }
 
-        public static IWebElement WaitUntilExists(this IWebDriver driver, By findBy, TimeSpan timeout)
+        public static IWebElement WaitUntilElementExistsOrLogsContainErrors(this IWebDriver driver, By findBy)
         {
             WaitAssertCore(driver, () =>
             {
@@ -64,12 +67,12 @@ namespace Microsoft.AspNetCore.E2ETesting
                     errors = driver.GetBrowserLogs(LogLevel.Severe);
                     if (errors.Count > 0)
                     {
-                        throw new BrowserLogErrorsException();
+                        throw new BrowserLogErrorsException(errors);
                     }
                 }
 
                 Assert.NotEmpty(driver.FindElements(findBy));
-            }, timeout);
+            }, default);
 
             return driver.FindElements(findBy)[0];
         }
@@ -91,7 +94,7 @@ namespace Microsoft.AspNetCore.E2ETesting
                         assertion();
                         return true;
                     }
-                    catch (Exception e)
+                    catch (Exception e) when (!(e is BrowserLogErrorsException))
                     {
                         lastException = e;
                         return false;
@@ -108,7 +111,7 @@ namespace Microsoft.AspNetCore.E2ETesting
 
                 var fileId = $"{Guid.NewGuid():N}.png";
                 var screenShotPath = Path.Combine(Path.GetFullPath(E2ETestOptions.Instance.ScreenShotsPath), fileId);
-                var errors = driver.GetBrowserLogs(LogLevel.Severe);
+                var errors = e is BrowserLogErrorsException logErrorsException ? logErrorsException.Errors : driver.GetBrowserLogs(LogLevel.Severe);
 
                 TakeScreenShot(driver, screenShotPath);
                 var exceptionInfo = lastException != null ? ExceptionDispatchInfo.Capture(lastException) :
@@ -151,6 +154,9 @@ namespace Microsoft.AspNetCore.E2ETesting
 
         private class BrowserLogErrorsException : Exception
         {
+            public BrowserLogErrorsException(IReadOnlyList<LogEntry> errors) => Errors = errors;
+
+            public IReadOnlyList<LogEntry> Errors { get; }
         }
     }
 }

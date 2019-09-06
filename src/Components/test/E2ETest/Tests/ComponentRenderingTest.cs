@@ -603,7 +603,7 @@ namespace Microsoft.AspNetCore.Components.E2ETest.Tests
             var appElement = Browser.MountTestComponent<DuplicateAttributesComponent>();
 
             var selector = By.CssSelector("#duplicate-on-element > div");
-            Browser.WaitUntilExists(selector);
+            Browser.Exists(selector);
 
             var element = appElement.FindElement(selector);
             Assert.Equal(string.Empty, element.GetAttribute("bool")); // attribute is present
@@ -623,7 +623,7 @@ namespace Microsoft.AspNetCore.Components.E2ETest.Tests
             var appElement = Browser.MountTestComponent<MovingCheckboxesComponent>();
             var incompleteItemsSelector = By.CssSelector(".incomplete-items li");
             var completeItemsSelector = By.CssSelector(".complete-items li");
-            Browser.WaitUntilExists(incompleteItemsSelector);
+            Browser.Exists(incompleteItemsSelector);
 
             // Mark first item as done; observe the remaining incomplete item appears unchecked
             // because the diff algoritm explicitly unchecks it

@@ -24,14 +24,14 @@ namespace Microsoft.AspNetCore.Components.E2ETest
                 javascript.ExecuteScript("window.open()");
                 browser.SwitchTo().Window(browser.WindowHandles.Last());
                 browser.Navigate(baseUri, baseRelativeUri, noReload: false);
-                browser.WaitUntilExists(By.CssSelector("h1#authentication"));
+                browser.Exists(By.CssSelector("h1#authentication"));
                 javascript.ExecuteScript("window.close()");
                 browser.SwitchTo().Window(originalWindow);
             }
             else
             {
                 browser.Navigate(baseUri, baseRelativeUri, noReload: false);
-                browser.WaitUntilExists(By.CssSelector("h1#authentication"));
+                browser.Exists(By.CssSelector("h1#authentication"));
             }
         }
     }
