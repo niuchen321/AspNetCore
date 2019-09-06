@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.0</TargetFramework>
+    <HasReferenceAssembly>false</HasReferenceAssembly>
+    <IsShippingPackage>false</IsShippingPackage>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,5 +13,5 @@
     <Reference Include="Microsoft.AspNetCore.Mvc" />
     <Reference Include="Microsoft.Extensions.Hosting" />
   </ItemGroup>
-  
+
 </Project>
