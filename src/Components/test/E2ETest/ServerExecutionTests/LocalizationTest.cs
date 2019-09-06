@@ -27,7 +27,6 @@ namespace Microsoft.AspNetCore.Components.E2ETest.ServerExecutionTests
 
         protected override void InitializeAsyncCore()
         {
-            // On WebAssembly, page reloads are expensive so skip if possible
             Navigate(ServerPathBase);
             MountTestComponent<CulturePicker>();
             WaitUntilExists(By.Id("culture-selector"));
