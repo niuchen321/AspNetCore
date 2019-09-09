@@ -78,4 +78,9 @@ Later on, this will be checked using this condition:
       Microsoft.AspNetCore.Hosting;
     </PackagesInPatch>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(VersionPrefix)' == '2.2.8' ">
+    <PackagesInPatch>
+      Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
+    </PackagesInPatch>
+  </PropertyGroup>
 </Project>
