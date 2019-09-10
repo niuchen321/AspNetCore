@@ -41,7 +41,7 @@ namespace Microsoft.AspNetCore.Components.E2ETest.ServerExecutionTests
             selector.SelectByValue(culture);
 
             // Click the link to return back to the test page
-            WaitUntilExists(By.ClassName("return-from-culture-setter")).Click();
+            Browser.Exists(By.ClassName("return-from-culture-setter")).Click();
 
             // That should have triggered a page load, so wait for the main test selector to come up.
             Browser.MountTestComponent<LocalizedText>();
