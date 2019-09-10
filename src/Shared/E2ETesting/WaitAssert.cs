@@ -44,40 +44,24 @@ namespace Microsoft.AspNetCore.E2ETesting
         public static void Single(this IWebDriver driver, Func<IEnumerable> actualValues)
             => WaitAssertCore(driver, () => Assert.Single(actualValues()));
 
-        public static void Exists(this IWebDriver driver, By finder)
+        public static IWebElement Exists(this IWebDriver driver, By finder)
             => Exists(driver, finder, default);
 
-        public static void Exists(this IWebDriver driver, By finder, TimeSpan timeout)
-            => WaitAssertCore(driver, () => Assert.NotEmpty(driver.FindElements(finder)), timeout);
-
-        public static IWebElement Element(this IWebDriver driver, By findBy)
-        {
-            driver.Exists(findBy);
-            return driver.FindElements(findBy)[0];
-        }
-
-        public static IWebElement WaitUntilElementExistsOrLogsContainErrors(this IWebDriver driver, By findBy)
-        {
-            WaitAssertCore(driver, () =>
+        public static IWebElement Exists(this IWebDriver driver, By finder, TimeSpan timeout)
+            => WaitAssertCore(driver, () =>
             {
-                IReadOnlyList<LogEntry> errors = null;
-                if (driver.Manage().Logs.AvailableLogTypes.Contains(LogType.Browser))
-                {
-                    // Fail-fast if any errors were logged to the console.
-                    errors = driver.GetBrowserLogs(LogLevel.Severe);
-                    if (errors.Count > 0)
-                    {
-                        throw new BrowserLogErrorsException(errors);
-                    }
-                }
-
-                Assert.NotEmpty(driver.FindElements(findBy));
-            }, default);
-
-            return driver.FindElements(findBy)[0];
-        }
+                var elements = driver.FindElements(finder);
+                Assert.NotEmpty(elements);
+                var result = elements[0];
+                return result;
+            }, timeout);
 
         private static void WaitAssertCore(IWebDriver driver, Action assertion, TimeSpan timeout = default)
+        {
+            WaitAssertCore<object>(driver, () => { assertion(); return null; }, timeout);
+        }
+
+        private static TResult WaitAssertCore<TResult>(IWebDriver driver, Func<TResult> assertion, TimeSpan timeout = default)
         {
             if (timeout == default)
             {
@@ -85,23 +69,24 @@ namespace Microsoft.AspNetCore.E2ETesting
             }
 
             Exception lastException = null;
+            TResult result = default;
             try
             {
                 new WebDriverWait(driver, timeout).Until(_ =>
                 {
                     try
                     {
-                        assertion();
+                        result = assertion();
                         return true;
                     }
-                    catch (Exception e) when (!(e is BrowserLogErrorsException))
+                    catch (Exception e)
                     {
                         lastException = e;
                         return false;
                     }
                 });
             }
-            catch (Exception e) when (e is BrowserLogErrorsException || e is WebDriverTimeoutException)
+            catch (WebDriverTimeoutException)
             {
                 // At this point at least one test failed, so we mark the test as failed. Any assertions after this one
                 // will fail faster. There's a small race condition here between checking the value for TestRunFailed
@@ -111,16 +96,18 @@ namespace Microsoft.AspNetCore.E2ETesting
 
                 var fileId = $"{Guid.NewGuid():N}.png";
                 var screenShotPath = Path.Combine(Path.GetFullPath(E2ETestOptions.Instance.ScreenShotsPath), fileId);
-                var errors = e is BrowserLogErrorsException logErrorsException ? logErrorsException.Errors : driver.GetBrowserLogs(LogLevel.Severe);
+                var errors = driver.GetBrowserLogs(LogLevel.All);
 
                 TakeScreenShot(driver, screenShotPath);
                 var exceptionInfo = lastException != null ? ExceptionDispatchInfo.Capture(lastException) :
-                    CaptureException(assertion);
+                    CaptureException(() => assertion());
 
                 throw new BrowserAssertFailedException(errors, exceptionInfo.SourceException, screenShotPath);
-
             }
+
+            return result;
         }
+
         private static ExceptionDispatchInfo CaptureException(Action assertion)
         {
             try
@@ -150,13 +137,6 @@ namespace Microsoft.AspNetCore.E2ETesting
                     Console.WriteLine($"Failed to take a screenshot {ex.ToString()}");
                 }
             }
-        }
-
-        private class BrowserLogErrorsException : Exception
-        {
-            public BrowserLogErrorsException(IReadOnlyList<LogEntry> errors) => Errors = errors;
-
-            public IReadOnlyList<LogEntry> Errors { get; }
         }
     }
 }

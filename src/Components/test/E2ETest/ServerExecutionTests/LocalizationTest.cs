@@ -46,7 +46,7 @@ namespace Microsoft.AspNetCore.Components.E2ETest.ServerExecutionTests
             // That should have triggered a page load, so wait for the main test selector to come up.
             Browser.MountTestComponent<LocalizedText>();
 
-            var cultureDisplay = Browser.Element(By.Id("culture-name-display"));
+            var cultureDisplay = Browser.Exists(By.Id("culture-name-display"));
             Assert.Equal($"Culture is: {culture}", cultureDisplay.Text);
 
             var messageDisplay = Browser.FindElement(By.Id("message-display"));

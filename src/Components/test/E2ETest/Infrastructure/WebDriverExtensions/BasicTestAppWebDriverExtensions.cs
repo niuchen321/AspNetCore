@@ -18,7 +18,7 @@ namespace Microsoft.AspNetCore.Components.E2ETest
         public static SelectElement WaitUntilTestSelectorReady(this IWebDriver browser)
         {
             var elemToFind = By.CssSelector("#test-selector > select");
-            return new SelectElement(browser.WaitUntilElementExistsOrLogsContainErrors(elemToFind));
+            return new SelectElement(browser.Exists(elemToFind));
         }
     }
 }
